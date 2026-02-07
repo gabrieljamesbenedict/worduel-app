@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-fun RootComponent(modifier: Modifier = Modifier) {
+fun Root(modifier: Modifier = Modifier) {
     Text(
         text = "Hello World!",
         modifier = modifier
