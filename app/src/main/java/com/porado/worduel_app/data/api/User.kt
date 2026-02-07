@@ -5,7 +5,7 @@ import retrofit2.http.Path
 import kotlin.time.Instant
 
 data class User(
-    val userId: Long,
+    val userId: Long?,
     val username: String,
     val password: String,
     val role: String
