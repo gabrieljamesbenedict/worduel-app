@@ -71,4 +71,11 @@ dependencies {
     implementation("io.ktor:ktor-client-content-negotiation:${ktor_version}")
     implementation("io.ktor:ktor-serialization-kotlinx-json:${ktor_version}")
     implementation("androidx.navigation:navigation-compose:${nav_version}")
+
+    // Retrofit
+    // See: https://www.youtube.com/watch?v=iIjHHZNb_Qk
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+
+    // GSON
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 }
