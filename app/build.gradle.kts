@@ -65,14 +65,6 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
-    // Ktor Dependencies
-    implementation("io.ktor:ktor-client-core:${ktor_version}")
-    implementation("io.ktor:ktor-client-cio:${ktor_version}")
-    implementation("io.ktor:ktor-client-logging:${ktor_version}")
-    implementation("io.ktor:ktor-client-content-negotiation:${ktor_version}")
-    implementation("io.ktor:ktor-serialization-kotlinx-json:${ktor_version}")
-    implementation("androidx.navigation:navigation-compose:${nav_version}")
-
     // Retrofit
     // See: https://www.youtube.com/watch?v=iIjHHZNb_Qk
     implementation("com.squareup.retrofit2:retrofit:2.9.0")

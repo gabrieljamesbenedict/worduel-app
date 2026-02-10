@@ -76,7 +76,9 @@ fun UserList() {
     val loading by viewModel.loading.collectAsState()
     val errorMessage by viewModel.errorMessage.collectAsState()
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .padding(16.dp)) {
 
         // Retry button
         Button(onClick = { viewModel.loadUsers() }, modifier = Modifier.fillMaxWidth()) {
