@@ -1,4 +1,4 @@
-package com.porado.worduel_app.auth
+package com.porado.worduel_app.ui
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
