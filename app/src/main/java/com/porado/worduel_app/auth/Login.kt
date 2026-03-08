@@ -10,7 +10,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.tooling.preview.Preview
 
+
+@Composable
 fun LoginScreen(
     onNavigateToSignup: () -> Unit,
     onLoginClick: (String, String) -> Unit
@@ -80,4 +83,12 @@ fun LoginScreen(
             Text("Don't have an account? Sign up here", color = worduelGreen)
         }
     }
+}
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun LoginScreenPreview() {
+    LoginScreen(
+        onNavigateToSignup = {},
+        onLoginClick = { _, _ -> }
+    )
 }
