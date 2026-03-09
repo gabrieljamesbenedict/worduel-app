@@ -1,5 +1,7 @@
 package com.porado.worduel_app.ui
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -10,10 +12,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.porado.worduel_app.R
+import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun HomeScreen(
@@ -30,50 +35,28 @@ fun HomeScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .background(BackgroundColor)
                 .padding(horizontal = 32.dp, vertical = 48.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-
-            // 1. Logo Space
-            // TODO: Replace with your actual logo drawable (e.g., R.drawable.worduel_logo)
-            Box(
-                modifier = Modifier
-                    .size(150.dp)
-                    .background(Color.LightGray, shape = RoundedCornerShape(100.dp)),
-                contentAlignment = Alignment.Center
-            ) {
-                Text("LOGO", fontWeight = FontWeight.ExtraBold, fontSize = 24.sp)
-            }
-
+            Image(
+                painter = painterResource(id = R.drawable.worduel_logo),
+                contentDescription = "Worduel Logo",
+                modifier = Modifier.size(150.dp),
+                contentScale = ContentScale.Fit
+            )
             Spacer(modifier = Modifier.height(64.dp))
 
-            // 2. Play Solo
-            GameButton(text = "Play Solo", onClick = onPlaySoloClick)
-
+            GameButton(text = "Solo", onClick = onPlaySoloClick)
             Spacer(modifier = Modifier.height(16.dp))
 
-            // 3. Play Duel
-            GameButton(text = "Play Duel", onClick = onPlayDuelClick)
 
+            GameButton(text = "Duel", onClick = onPlayDuelClick)
             Spacer(modifier = Modifier.height(16.dp))
 
-            // 4. Play Challenge
-            GameButton(text = "Play Challenge", onClick = onPlayChallengeClick)
-
-            Spacer(modifier = Modifier.height(48.dp))
-
-            // 5. Login Button (Styled differently as a secondary action)
-            TextButton(
-                onClick = onLoginClick,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    text = "Log In to Save Progress",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium
-                )
-            }
+            LoginButton(text = "Login", onClick = onLoginClick)
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
@@ -84,11 +67,11 @@ fun GameButton(text: String, onClick: () -> Unit) {
     Button(
         onClick = onClick,
         modifier = Modifier
-            .fillMaxWidth()
-            .height(64.dp), // Slightly taller for that chunky, tap-friendly game feel
-        shape = RoundedCornerShape(24.dp), // Very rounded edges mimicking your wireframe
+            .width(230.dp)
+            .height(55.dp),
+        shape = RoundedCornerShape(24.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primary
+            containerColor = GreenColor
         ),
         elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
     ) {
@@ -99,4 +82,36 @@ fun GameButton(text: String, onClick: () -> Unit) {
             letterSpacing = 1.5.sp
         )
     }
+}
+@Composable
+fun LoginButton(text: String, onClick: () -> Unit) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier
+            .width(230.dp)
+            .height(55.dp),
+        shape = RoundedCornerShape(24.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = BackgroundColor
+        ),
+        elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp),
+        border = BorderStroke(3.dp, GreenColor)
+    ) {
+        Text(
+            text = text.uppercase(), // Uppercase looks great for game menus
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            letterSpacing = 1.5.sp
+        )
+    }
+}
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun HomeScreenPreview() {
+    HomeScreen(
+        onPlaySoloClick = {},
+        onPlayDuelClick = {},
+        onPlayChallengeClick = {},
+        onLoginClick = {}
+    )
 }
