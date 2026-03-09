@@ -11,6 +11,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
+import com.porado.worduel_app.ui.GreenColor
 
 @Composable
 fun SignupScreen(
@@ -34,7 +35,7 @@ fun SignupScreen(
             text = "JOIN WORDUEL",
             fontSize = 32.sp,
             fontWeight = FontWeight.Bold,
-            color = worduelYellow
+            color = GreenColor
         )
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -42,7 +43,7 @@ fun SignupScreen(
         OutlinedTextField(
             value = username,
             onValueChange = { username = it },
-            label = { Text("Choose a Username") },
+            label = { Text("Username") },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -72,7 +73,7 @@ fun SignupScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = worduelYellow)
+            colors = ButtonDefaults.buttonColors(containerColor = GreenColor)
         ) {
             Text("Create Account", fontSize = 18.sp)
         }
