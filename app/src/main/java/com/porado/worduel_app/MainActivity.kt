@@ -8,16 +8,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 
-// Make sure both screens are imported!
 import com.porado.worduel_app.auth.LoginScreen
 import com.porado.worduel_app.auth.SignupScreen
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
-            // Call our new navigation controller function
             WorduelNavigation()
         }
     }
@@ -28,10 +27,28 @@ fun WorduelNavigation() {
     // This controller manages the back stack and screen swapping
     val navController = rememberNavController()
 
-    // The NavHost links the controller to specific screen routes
-    NavHost(navController = navController, startDestination = "login") {
+    NavHost(navController = navController, startDestination = "home") {
 
-        // Route 1: The Login Screen
+        // Route 1: The Home Screen (Your new screen!)
+        composable("home") {
+            HomeScreen(
+                onPlaySoloClick = {
+                    /* TODO: Navigate to Solo Game Screen */
+                },
+                onPlayDuelClick = {
+                    /* TODO: Navigate to Duel Game Screen */
+                },
+                onPlayChallengeClick = {
+                    /* TODO: Navigate to Challenge Game Screen */
+                },
+                onLoginClick = {
+                    // This triggers when the user taps the Login button on the Home screen
+                    navController.navigate("login")
+                }
+            )
+        }
+
+        // Route 2: The Login Screen
         composable("login") {
             LoginScreen(
                 onNavigateToSignup = {
@@ -40,11 +57,13 @@ fun WorduelNavigation() {
                 },
                 onLoginClick = { email, password ->
                     /* TODO: API call to authenticate user */
+                    // Once authenticated, you might want to pop back to home:
+                    // navController.popBackStack("home", inclusive = false)
                 }
             )
         }
 
-        // Route 2: The Signup Screen
+        // Route 3: The Signup Screen
         composable("signup") {
             SignupScreen(
                 onNavigateToLogin = {
