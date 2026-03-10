@@ -4,9 +4,13 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.porado.worduel_app.data.api.UsernamePassword
+import com.porado.worduel_app.data.service.AuthService
+import kotlinx.coroutines.launch
 
 
 class MainActivity : ComponentActivity() {
@@ -39,7 +43,6 @@ fun WorduelNavigation() {
                     /* TODO: Navigate to Challenge Game Screen */
                 },
                 onLoginClick = {
-                    // This triggers when the user taps the Login button on the Home screen
                     navController.navigate("login")
                 }
             )
@@ -47,28 +50,35 @@ fun WorduelNavigation() {
 
         // Route 2: The Login Screen
         composable("login") {
+
+            val scope = rememberCoroutineScope()
+
             LoginScreen(
                 onNavigateToSignup = {
-                    // When the signup text is clicked, navigate to the signup route
                     navController.navigate("signup")
                 },
-                onLoginClick = { email, password ->
-                    /* TODO: API call to authenticate user */
-                    // Once authenticated, you might want to pop back to home:
-                    // navController.popBackStack("home", inclusive = false)
+                onLoginClick = { username, password ->
+                    scope.launch {
+                        AuthService.login(UsernamePassword(username, password))
+                    }
                 }
             )
         }
 
         // Route 3: The Signup Screen
         composable("signup") {
+
+            val scope = rememberCoroutineScope()
+
             SignupScreen(
                 onNavigateToLogin = {
                     // Go back to the login screen
                     navController.popBackStack()
                 },
-                onSignupClick = { username, email, password ->
-                    /* TODO: API call to register user */
+                onSignupClick = { username, password ->
+                    scope.launch {
+                        AuthService.register(UsernamePassword(username, password))
+                    }
                 }
             )
         }

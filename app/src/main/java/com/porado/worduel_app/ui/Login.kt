@@ -18,7 +18,7 @@ fun LoginScreen(
     onNavigateToSignup: () -> Unit,
     onLoginClick: (String, String) -> Unit
 ) {
-    var email by remember { mutableStateOf("") }
+    var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
     val worduelGreen = Color(0xFF538D4E)
@@ -44,9 +44,9 @@ fun LoginScreen(
 
         // Email Field
         OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text("Email") },
+            value = username,
+            onValueChange = { username = it },
+            label = { Text("Username") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true
         )
@@ -67,7 +67,7 @@ fun LoginScreen(
 
         // Login Button
         Button(
-            onClick = { onLoginClick(email, password) },
+            onClick = { onLoginClick(username, password) },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),

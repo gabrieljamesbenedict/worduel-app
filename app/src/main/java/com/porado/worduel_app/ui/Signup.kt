@@ -15,10 +15,9 @@ import androidx.compose.ui.tooling.preview.Preview
 @Composable
 fun SignupScreen(
     onNavigateToLogin: () -> Unit,
-    onSignupClick: (String, String, String) -> Unit
+    onSignupClick: (String, String) -> Unit
 ) {
     var username by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
     val worduelYellow = Color(0xFFB59F3B) // Wordle Yellow
@@ -49,15 +48,6 @@ fun SignupScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text("Email") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
             value = password,
             onValueChange = { password = it },
             label = { Text("Password") },
@@ -68,7 +58,7 @@ fun SignupScreen(
         Spacer(modifier = Modifier.height(32.dp))
 
         Button(
-            onClick = { onSignupClick(username, email, password) },
+            onClick = { onSignupClick(username, password) },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),
@@ -89,6 +79,6 @@ fun SignupScreen(
 fun SignupScreenPreview() {
     SignupScreen(
         onNavigateToLogin = {},
-        onSignupClick = { _, _, _ -> }
+        onSignupClick = { _, _ -> }
     )
 }
