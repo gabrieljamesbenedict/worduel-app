@@ -1,12 +1,15 @@
 package com.porado.worduel_app.ui
 
-import androidx.compose.animation.core.*
-import androidx.compose.foundation.*
-import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -16,16 +19,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 val BackgroundColor = Color(0xFF121213)
-val TileColor     = Color(0xFF121213)
+val TileColor = Color(0xFF121213)
 val TileBorderColor = Color(0xFF3A3A3C)
-val KeyColor      = Color(0xFF818384)
-val TextColor     = Color.White
-val GreenColor    = Color(0xFF538D4E)
-val YellowColor   = Color(0xFFB59F3B)
-val GreyColor     = Color(0xFF3A3A3C)
+val KeyColor = Color(0xFF818384)
 
-//sample word
-const val TARGET_WORD = "CRANE"
+val GreenColor = Color(0xFF538D4E)
+
+val OrangeColor = Color(0xFFFFD45A)
+
+val TextColor = Color.White
 
 val keyRows = listOf(
     listOf("Q","W","E","R","T","Y","U","I","O","P"),
@@ -33,162 +35,163 @@ val keyRows = listOf(
     listOf("ENTER","Z","X","C","V","B","N","M","⌫")
 )
 
-enum class TileState { EMPTY, FILLED, CORRECT, PRESENT, ABSENT }
-
-data class Tile(val letter: String = "", val state: TileState = TileState.EMPTY)
-
 @Composable
 fun WordleScreen() {
-    val grid = remember {
-        mutableStateListOf(*Array(6) { mutableStateListOf(*Array(5) { Tile() }) })
-    }
-    var currentRow by remember { mutableStateOf(0) }
-    var currentCol by remember { mutableStateOf(0) }
-    var gameOver   by remember { mutableStateOf(false) }
-    var message    by remember { mutableStateOf("") }
-    val shakingRow  = remember { mutableStateOf(-1) }
-    val keyColors   = remember { mutableStateMapOf<String, TileState>() }
-
-    fun onKey(key: String) {
-        if (gameOver) return
-        when (key) {
-            "⌫" -> {
-                if (currentCol > 0) {
-                    currentCol--
-                    grid[currentRow][currentCol] = Tile()
-                }
-            }
-            "ENTER" -> {
-                if (currentCol < 5) {
-                    shakingRow.value = currentRow
-                    message = "Not enough letters"
-                    return
-                }
-                val guess  = grid[currentRow].joinToString("") { it.letter }
-                val target = TARGET_WORD
-                val result = Array(5) { TileState.ABSENT }
-                val targetCounts = target.groupingBy { it }.eachCount().toMutableMap()
-
-                // Pass 1 — correct position
-                for (i in 0..4) {
-                    if (guess[i] == target[i]) {
-                        result[i] = TileState.CORRECT
-                        targetCounts[guess[i]] = targetCounts[guess[i]]!! - 1
-                    }
-                }
-                // Pass 2 — wrong position
-                for (i in 0..4) {
-                    if (result[i] != TileState.CORRECT) {
-                        val c = guess[i]
-                        if ((targetCounts[c] ?: 0) > 0) {
-                            result[i] = TileState.PRESENT
-                            targetCounts[c] = targetCounts[c]!! - 1
-                        }
-                    }
-                }
-
-                for (i in 0..4) {
-                    val letter = grid[currentRow][i].letter
-                    grid[currentRow][i] = grid[currentRow][i].copy(state = result[i])
-                    val existing = keyColors[letter]
-                    if (existing != TileState.CORRECT) {
-                        if (existing != TileState.PRESENT || result[i] == TileState.CORRECT) {
-                            keyColors[letter] = result[i]
-                        }
-                    }
-                }
-
-                when {
-                    guess == target -> { message = "Win!"; gameOver = true }
-                    currentRow == 5 -> { message = "The word was $target"; gameOver = true }
-                    else -> { currentRow++; currentCol = 0; message = "" }
-                }
-            }
-            else -> {
-                if (currentCol < 5) {
-                    grid[currentRow][currentCol] = Tile(key, TileState.FILLED)
-                    currentCol++
-                }
-            }
-        }
-    }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(BackgroundColor)
-            .padding(10.dp),
+            .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Score()
-        Spacer(Modifier.height(16.dp))
-        OpponentsName()
-        Spacer(Modifier.height(16.dp))
-        OpponentStats()
-        Spacer(Modifier.height(5.dp))
-        OpponentsScore()
-        Spacer(Modifier.height(32.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Start
+        ) {
+            HomeButton(text = "Home", onClick = { /* navigate */ })
+        }
+
+        GameHeader(
+            playerInitial = "A",
+            opponentUsername = "Player 2",
+            playerScore = "0",
+            opponentScore = "0"
+        )
+
+        Spacer(modifier = Modifier.height(4.dp))
+
         Divider()
-        Spacer(Modifier.height(24.dp))
 
-        if (message.isNotEmpty()) {
-            Text(
-                text = message,
-                color = TextColor,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold,
+        Spacer(modifier = Modifier.height(24.dp))
+        WordleGrid()
+
+        Spacer(modifier = Modifier.height(32.dp))
+        
+        WordleKeyboard()
+    }
+}
+@Composable
+fun HomeButton(text: String, onClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .width(50.dp)
+            .height(50.dp)
+            .background(TileBorderColor, RoundedCornerShape(8.dp))
+            .clickable { onClick() },
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            imageVector = Icons.Default.Home,
+            contentDescription = text,
+            tint = TextColor,
+            modifier = Modifier.size(24.dp)
+        )
+    }
+}
+@Composable
+fun GameHeader(
+    playerInitial: String,
+    opponentUsername: String,
+    playerScore: String,
+    opponentScore: String
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Column(
                 modifier = Modifier
-                    .background(Color(0xFF3A3A3C), RoundedCornerShape(4.dp))
-                    .padding(horizontal = 12.dp, vertical = 6.dp)
+                    .fillMaxWidth()
+                    .background(Color(0xFF1A1A1B), RoundedCornerShape(12.dp))
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+
+                Text(
+                    text = "playing against:",
+                    color = Color(0xFFAAAAAA),
+                    fontSize = 13.sp
+                )
+                Text(
+                    text = opponentUsername,
+                    color = TextColor,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+        }
+
+        // Score row
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = playerScore,
+                color = GreenColor,
+                fontSize = 26.sp,
+                fontWeight = FontWeight.ExtraBold,
+                letterSpacing = 2.sp
             )
-            Spacer(Modifier.height(12.dp))
-        }
 
-        WordleGrid(grid = grid, shakingRow = shakingRow)
-        Spacer(Modifier.height(32.dp))
-        WordleKeyboard(keyColors = keyColors, onKey = ::onKey)
-    }
-}
+            Spacer(modifier = Modifier.width(12.dp))
 
-// Opponent Stats
+            Text(
+                text = "vs",
+                color = Color(0xFFAAAAAA),
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Normal
+            )
 
-@Composable fun Score() {
-    Text("Score", color = TextColor, fontSize = 36.sp, fontWeight = FontWeight.Bold)
-}
+            Spacer(modifier = Modifier.width(12.dp))
 
-@Composable fun OpponentsName() {
-    Text("Opponent's Name", color = TextColor, fontSize = 24.sp)
-}
-
-@Composable fun OpponentStats() {
-    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-        repeat(5) {
-            Box(Modifier.size(30.dp).background(TileColor).border(2.dp, TileBorderColor))
+            Text(
+                text = opponentScore,
+                color = OrangeColor,
+                fontSize = 26.sp,
+                fontWeight = FontWeight.ExtraBold,
+                letterSpacing = 2.sp
+            )
         }
     }
 }
-
-@Composable fun OpponentsScore() {
-    Text("OpponentsScore", color = TextColor, fontSize = 20.sp)
-}
-
-@Composable fun Divider() {
-    Box(Modifier.width(320.dp).height(1.dp).background(TileBorderColor))
-}
-
-//wordle grid
 
 @Composable
-fun WordleGrid(grid: List<List<Tile>>, shakingRow: MutableState<Int>) {
+fun Divider() {
+    Box(
+        modifier = Modifier
+            .width(320.dp)
+            .height(1.dp)
+            .background(TileBorderColor)
+    )
+}
+
+@Composable
+fun WordleGrid() {
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        grid.forEachIndexed { rowIdx, row ->
-            ShakingRow(
-                shaking   = shakingRow.value == rowIdx,
-                onShakeDone = { shakingRow.value = -1 }
-            ) {
-                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    row.forEach { tile -> WordleTile(tile) }
+        repeat(6) {
+            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                repeat(5) {
+                    Box(
+                        modifier = Modifier
+                            .size(58.dp)
+                            .background(TileColor)
+                            .border(2.dp, TileBorderColor)
+                    )
                 }
             }
         }
@@ -196,78 +199,30 @@ fun WordleGrid(grid: List<List<Tile>>, shakingRow: MutableState<Int>) {
 }
 
 @Composable
-fun ShakingRow(shaking: Boolean, onShakeDone: () -> Unit, content: @Composable () -> Unit) {
-    val offsetX = remember { Animatable(0f) }
-    LaunchedEffect(shaking) {
-        if (shaking) {
-            repeat(5) { i ->
-                offsetX.animateTo(if (i % 2 == 0) 10f else -10f, tween(50))
-            }
-            offsetX.animateTo(0f, tween(50))
-            onShakeDone()
-        }
-    }
-    Box(Modifier.offset(x = offsetX.value.dp)) { content() }
-}
-
-@Composable
-fun WordleTile(tile: Tile) {
-    val bg = when (tile.state) {
-        TileState.CORRECT -> GreenColor
-        TileState.PRESENT -> YellowColor
-        TileState.ABSENT  -> GreyColor
-        else              -> TileColor
-    }
-    val border = when (tile.state) {
-        TileState.FILLED -> Color(0xFF565758)
-        TileState.EMPTY  -> TileBorderColor
-        else             -> Color.Transparent
-    }
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier.size(44.dp).background(bg).border(2.dp, border)
-    ) {
-        if (tile.letter.isNotEmpty()) {
-            Text(tile.letter, color = TextColor, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-        }
-    }
-}
-
-// keyboard
-
-@Composable
-fun WordleKeyboard(keyColors: Map<String, TileState>, onKey: (String) -> Unit) {
+fun WordleKeyboard() {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         keyRows.forEach { row ->
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                row.forEach { key -> WordleKey(key, keyColors[key], onKey) }
+                row.forEach { key ->
+                    WordleKey(key)
+                }
             }
         }
     }
 }
 
 @Composable
-fun WordleKey(label: String, state: TileState?, onKey: (String) -> Unit) {
+fun WordleKey(label: String) {
     val isWide = label.length > 1
-    val bg = when (state) {
-        TileState.CORRECT -> GreenColor
-        TileState.PRESENT -> YellowColor
-        TileState.ABSENT  -> GreyColor
-        else              -> KeyColor
-    }
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .height(56.dp)
-            .width(if (isWide) 44.dp else 30.dp)
-            .background(bg, RoundedCornerShape(4.dp))
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null
-            ) { onKey(label) }
+            .width(if (isWide) 40.dp else 30.dp)
+            .background(KeyColor, shape = RoundedCornerShape(4.dp))
     ) {
         Text(
             text = label,
