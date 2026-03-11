@@ -7,19 +7,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
 
-
 @Composable
 fun LoginScreen(
-    onNavigateToSignup: () -> Unit,
-    onLoginClick: (String, String) -> Unit
+    // Updated parameter to just take the nickname
+    onStartClick: (String) -> Unit
 ) {
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    var nickname by remember { mutableStateOf("") }
 
     val worduelGreen = Color(0xFF538D4E)
 
@@ -42,7 +39,37 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(48.dp))
 
-        // Email Field
+        // Nickname Field
+        OutlinedTextField(
+            value = nickname,
+            onValueChange = { nickname = it },
+            label = { Text("Enter Nickname") },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Start Button
+        Button(
+            onClick = {
+                // This passes the nickname back up so the app can use it!
+                onStartClick(nickname)
+            },
+            modifier = Modifier.fillMaxWidth().height(50.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = worduelGreen)
+        ) {
+            Text(
+                text = "Play", // Changed to Play as you suggested
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+
+        /* =========================================
+        COMMENTED OUT OLD LOGIN CODE BELOW
+        =========================================
+        // Email Field (Old)
         OutlinedTextField(
             value = username,
             onValueChange = { username = it },
@@ -82,13 +109,15 @@ fun LoginScreen(
         TextButton(onClick = onNavigateToSignup) {
             Text("Don't have an account? Sign up here", color = worduelGreen)
         }
+        */
     }
 }
+
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun LoginScreenPreview() {
+    // Updated preview to match the new parameter
     LoginScreen(
-        onNavigateToSignup = {},
-        onLoginClick = { _, _ -> }
+        onStartClick = { _ -> }
     )
 }

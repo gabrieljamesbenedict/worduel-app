@@ -28,7 +28,7 @@ fun WorduelNavigation() {
     // This controller manages the back stack and screen swapping
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = "home") {
+    NavHost(navController = navController, startDestination = "login") {
 
         // Route 1: The Home Screen (Your new screen!)
         composable("home") {
@@ -52,7 +52,12 @@ fun WorduelNavigation() {
         composable("login") {
 
             val scope = rememberCoroutineScope()
-
+            LoginScreen(
+                onStartClick = { nickname ->
+                    navController.navigate("home")
+                }
+            )
+        /*
             LoginScreen(
                 onNavigateToSignup = {
                     navController.navigate("signup")
@@ -62,7 +67,7 @@ fun WorduelNavigation() {
                         AuthService.login(UsernamePassword(username, password))
                     }
                 }
-            )
+            ) */
         }
 
         // Route 3: The Signup Screen

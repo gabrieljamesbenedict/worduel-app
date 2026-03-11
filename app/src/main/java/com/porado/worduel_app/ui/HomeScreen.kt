@@ -54,9 +54,10 @@ fun HomeScreen(
 
             GameButton(text = "Duel", onClick = onPlayDuelClick)
             Spacer(modifier = Modifier.height(16.dp))
-
+            /*
             LoginButton(text = "Login", onClick = onLoginClick)
             Spacer(modifier = Modifier.height(16.dp))
+             */
         }
     }
 }
@@ -83,7 +84,7 @@ fun GameButton(text: String, onClick: () -> Unit) {
         )
     }
 }
-@Composable
+/*
 fun LoginButton(text: String, onClick: () -> Unit) {
     Button(
         onClick = onClick,
@@ -105,6 +106,7 @@ fun LoginButton(text: String, onClick: () -> Unit) {
         )
     }
 }
+ */
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun HomeScreenPreview() {
