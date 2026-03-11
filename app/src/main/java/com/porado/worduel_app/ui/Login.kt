@@ -1,94 +1,56 @@
 package com.porado.worduel_app.ui
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.tooling.preview.Preview
-
+import androidx.lifecycle.viewmodel.compose.viewModel // Make sure you import this!
 
 @Composable
 fun LoginScreen(
-    onNavigateToSignup: () -> Unit,
-    onLoginClick: (String, String) -> Unit
+    onNavigateToHome: () -> Unit,
+    // Inject the ViewModel here
+    viewModel: LoginViewModel = viewModel()
 ) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
-    val worduelGreen = Color(0xFF538D4E)
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        // App Title
-        Text(
-            text = "WORDUEL",
-            fontSize = 40.sp,
-            fontWeight = FontWeight.Bold,
-            color = worduelGreen,
-            letterSpacing = 4.sp
-        )
-        Text(text = "Competitive Word Guessing", color = Color.Gray)
-
-        Spacer(modifier = Modifier.height(48.dp))
-
-        // Email Field
-        OutlinedTextField(
+    Column(modifier = Modifier.padding(16.dp)) {
+        TextField(
             value = username,
             onValueChange = { username = it },
-            label = { Text("Username") },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true
+            label = { Text("Username") }
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
-        // Password Field
-        OutlinedTextField(
+        TextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("Password") },
-            visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true
+            label = { Text("Password") }
         )
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        // Login Button
-        Button(
-            onClick = { onLoginClick(username, password) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = worduelGreen)
-        ) {
-            Text("Login", fontSize = 18.sp)
-        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Navigation to Signup
-        TextButton(onClick = onNavigateToSignup) {
-            Text("Don't have an account? Sign up here", color = worduelGreen)
+        Button(
+            onClick = {
+                // Call the ViewModel function when the button is clicked!
+                viewModel.performLogin(
+                    user = username,
+                    pass = password,
+                    onSuccess = { onNavigateToHome() } // Pass the navigation action
+                )
+            }
+        ) {
+            Text("Login")
+        }
+
+        // Display the loading or error status from the ViewModel
+        if (viewModel.loginStatus.isNotEmpty()) {
+            Text(text = viewModel.loginStatus, modifier = Modifier.padding(top = 8.dp))
         }
     }
-}
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun LoginScreenPreview() {
-    LoginScreen(
-        onNavigateToSignup = {},
-        onLoginClick = { _, _ -> }
-    )
 }

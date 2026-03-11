@@ -50,16 +50,11 @@ fun WorduelNavigation() {
 
         // Route 2: The Login Screen
         composable("login") {
-
-            val scope = rememberCoroutineScope()
-
             LoginScreen(
-                onNavigateToSignup = {
-                    navController.navigate("signup")
-                },
-                onLoginClick = { username, password ->
-                    scope.launch {
-                        AuthService.login(UsernamePassword(username, password))
+                onNavigateToHome = {
+                    navController.navigate("home") {
+                        // Clear the backstack so the user can't press 'back' to go to the login screen
+                        popUpTo("login") { inclusive = true }
                     }
                 }
             )
@@ -67,17 +62,12 @@ fun WorduelNavigation() {
 
         // Route 3: The Signup Screen
         composable("signup") {
-
-            val scope = rememberCoroutineScope()
-
             SignupScreen(
-                onNavigateToLogin = {
-                    // Go back to the login screen
-                    navController.popBackStack()
-                },
-                onSignupClick = { username, password ->
-                    scope.launch {
-                        AuthService.register(UsernamePassword(username, password))
+                onNavigateToLogin = { navController.popBackStack() },
+                onSignupSuccess = {
+                    // Send them back to login after successful creation
+                    navController.navigate("login") {
+                        popUpTo("signup") { inclusive = true }
                     }
                 }
             )

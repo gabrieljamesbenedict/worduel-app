@@ -8,19 +8,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel // Added import
 
 @Composable
 fun SignupScreen(
     onNavigateToLogin: () -> Unit,
-    onSignupClick: (String, String) -> Unit
+    onSignupSuccess: () -> Unit, // Replaced onSignupClick with a success callback
+    viewModel: SignupViewModel = viewModel() // Injected the ViewModel
 ) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
-    val worduelYellow = Color(0xFFB59F3B) // Wordle Yellow
+    val worduelYellow = Color(0xFFB59F3B)
+    val GreenColor = Color(0xFF538D4E) // Assuming this is your Wordle green
 
     Column(
         modifier = Modifier
@@ -58,13 +62,30 @@ fun SignupScreen(
         Spacer(modifier = Modifier.height(32.dp))
 
         Button(
-            onClick = { onSignupClick(username, password) },
+            onClick = {
+                // Delegate the logic to the ViewModel
+                viewModel.performSignup(
+                    user = username,
+                    pass = password,
+                    onSuccess = onSignupSuccess
+                )
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),
             colors = ButtonDefaults.buttonColors(containerColor = GreenColor)
         ) {
             Text("Create Account", fontSize = 18.sp)
+        }
+
+        // Display the status message from the ViewModel
+        if (viewModel.signupStatus.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = viewModel.signupStatus,
+                color = if (viewModel.signupStatus.contains("failed")) Color.Red else Color.Gray,
+                textAlign = TextAlign.Center
+            )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -74,11 +95,12 @@ fun SignupScreen(
         }
     }
 }
+
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun SignupScreenPreview() {
     SignupScreen(
         onNavigateToLogin = {},
-        onSignupClick = { _, _ -> }
+        onSignupSuccess = {}
     )
 }
