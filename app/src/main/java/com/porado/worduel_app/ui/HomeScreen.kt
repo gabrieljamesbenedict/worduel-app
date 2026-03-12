@@ -9,6 +9,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,9 +29,11 @@ fun HomeScreen(
     onPlaySoloClick: () -> Unit,
     onPlayDuelClick: () -> Unit,
     onPlayChallengeClick: () -> Unit,
-    onLoginClick: () -> Unit
+    onLoginClick: () -> Unit,
+    onSaveNickname: (String) -> Unit
 ) {
-    // A Surface provides a good background for a game app
+    var nickname by remember { mutableStateOf("") }
+
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
@@ -46,11 +52,24 @@ fun HomeScreen(
                 modifier = Modifier.size(150.dp),
                 contentScale = ContentScale.Fit
             )
-            Spacer(modifier = Modifier.height(64.dp))
+            Spacer(modifier = Modifier.height(32.dp))
+
+            OutlinedTextField(
+                value = nickname,
+                onValueChange = { nickname = it },
+                label = { Text("Enter Nickname to connect") },
+                singleLine = true
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Button(onClick = { onSaveNickname(nickname) }) {
+                Text("Save Nickname")
+            }
+
+            Spacer(modifier = Modifier.height(32.dp))
 
             GameButton(text = "Solo", onClick = onPlaySoloClick)
             Spacer(modifier = Modifier.height(16.dp))
-
 
             GameButton(text = "Duel", onClick = onPlayDuelClick)
             Spacer(modifier = Modifier.height(16.dp))
@@ -61,7 +80,6 @@ fun HomeScreen(
     }
 }
 
-// Reusable Composable for your main game modes
 @Composable
 fun GameButton(text: String, onClick: () -> Unit) {
     Button(
@@ -76,13 +94,14 @@ fun GameButton(text: String, onClick: () -> Unit) {
         elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
     ) {
         Text(
-            text = text.uppercase(), // Uppercase looks great for game menus
+            text = text.uppercase(),
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
             letterSpacing = 1.5.sp
         )
     }
 }
+
 @Composable
 fun LoginButton(text: String, onClick: () -> Unit) {
     Button(
@@ -98,13 +117,14 @@ fun LoginButton(text: String, onClick: () -> Unit) {
         border = BorderStroke(3.dp, GreenColor)
     ) {
         Text(
-            text = text.uppercase(), // Uppercase looks great for game menus
+            text = text.uppercase(),
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
             letterSpacing = 1.5.sp
         )
     }
 }
+
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun HomeScreenPreview() {
@@ -112,6 +132,7 @@ fun HomeScreenPreview() {
         onPlaySoloClick = {},
         onPlayDuelClick = {},
         onPlayChallengeClick = {},
-        onLoginClick = {}
+        onLoginClick = {},
+        onSaveNickname = {}
     )
 }

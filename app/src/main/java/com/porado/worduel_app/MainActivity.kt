@@ -49,13 +49,12 @@ fun WorduelNavigation() {
         }
 
         // Route 2: The Login Screen
-        composable("login") {
+        composable(route = "login") {
             LoginScreen(
                 onNavigateToHome = {
-                    navController.navigate("home") {
-                        // Clear the backstack so the user can't press 'back' to go to the login screen
-                        popUpTo("login") { inclusive = true }
-                    }
+                    // This matches Gabriel's new code. Once the user logs in
+                    // successfully with their username/password, it sends them here!
+                    navController.navigate("home")
                 }
             )
         }
